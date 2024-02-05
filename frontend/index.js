@@ -19,28 +19,19 @@ async function sprintChallenge5() { // Note the async keyword, in case you wish 
     info.textContent = 'No learner is selected';
 
     learnerArr.forEach(learner => {
-      cardsDiv.appendChild(buildLearnerCard(learner));
+      cardsDiv.appendChild(buildLearnerCard(learner, mentorArr));
     })
-
-
-
-
-
-
-
-
-
-
 
   } catch (error) {
     console.log(error.message);
   }
 
-  function buildLearnerCard({ id, fullName, email, mentors }, ) {
+  function buildLearnerCard({ id, fullName, email, mentors }, mentorArr) {
     const learnerCard = document.createElement('div');
     const nameHead = document.createElement('h3');
     const emailDiv = document.createElement('div');
     const mentorHead = document.createElement('h4');
+    const mentorList = document.createElement('ul');
 
     learnerCard.classList.add('card');
     mentorHead.classList.add('closed');
@@ -52,6 +43,13 @@ async function sprintChallenge5() { // Note the async keyword, in case you wish 
     learnerCard.appendChild(nameHead);
     learnerCard.appendChild(emailDiv);
     learnerCard.appendChild(mentorHead);
+    learnerCard.appendChild(mentorList);
+
+    buildMentorList(mentors, mentorArr).forEach(name => {
+      const li = document.createElement('li');
+      li.textContent = name;
+      mentorList.appendChild(li);
+    })
 
     learnerCard.addEventListener('click', () => {
       const selected = document.querySelector('.selected');
@@ -59,13 +57,12 @@ async function sprintChallenge5() { // Note the async keyword, in case you wish 
         let name = selected.childNodes[0].textContent.split(',')[0];
         selected.childNodes[0].textContent = name;
         selected.classList.remove('selected');
+        info.textContent = 'No learner is selected';
       }
       if (selected !== learnerCard) {
         learnerCard.classList.add('selected');
         nameHead.textContent = `${fullName}, ID ${id}`;
         info.textContent = `The selected learner is ${fullName}`;
-      } else {
-        info.textContent = 'No learner selected';
       }
     });
 
@@ -78,11 +75,18 @@ async function sprintChallenge5() { // Note the async keyword, in case you wish 
     return learnerCard;
   }
 
-  function buildMentorList() {
-
+  function buildMentorList(mentor_ids, mentorArr) {
+    const mentorNames = [];
+    mentor_ids.forEach(id => {
+      mentorArr.forEach(mentor => {
+        if (mentor.id === id) {
+          let fullName = `${mentor.firstName} ${mentor.lastName}`;
+          mentorNames.push(fullName);
+        }
+      })
+    })
+    return mentorNames;
   }
-
-
   // 👆 WORK WORK ABOVE THIS LINE 👆
 }
 
